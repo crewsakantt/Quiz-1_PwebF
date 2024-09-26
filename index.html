@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Darjo Cyakk!</title>
+    <style>
+        :root {
+            --background-color: #121212;
+            --surface-color: #1e1e1e;
+            --primary-color: #BB86FC;
+            --secondary-color: #03DAC6;
+            --text-color: #E0E0E0;
+            --text-color-secondary: #A0A0A0;
+            --spotify-green: #1DB954;
+            --spotify-green-hover: #1ed760;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .navbar {
+            background-color: var(--surface-color);
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .navbar-menu {
+            display: flex;
+            list-style-type: none;
+        }
+
+        .navbar-menu li {
+            margin-left: 20px;
+        }
+
+        .navbar-menu li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        
+        .navbar-menu li a:hover, .navbar-menu li a.active {
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        
+        main {
+            padding-top: 60px;
+        }
+        
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+        
+        .hero {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://source.unsplash.com/random/1600x900?sidoarjo,city');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text-color);
+        }
+        
+        .hero-content {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 2rem;
+            border-radius: 10px;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .section {
+            background-color: var(--surface-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .vertical-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .card, .band-card, .food-card {
+            background-color: var(--surface-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .card:hover, .band-card:hover, .food-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+        
+        .card img, .band-card img, .food-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .card-content, .band-card-content, .food-card-content {
+            padding: 1.5rem;
+        }
+        
+        .food-card h3, .band-card h3, .card h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .food-card p, .band-card p, .card p {
+            color: var(--text-color-secondary);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            color: var(--text-color-secondary);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: var(--text-color);
+        }
+        
+        .spotify-link {
+            color: var(--spotify-green);
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .spotify-link:hover {
+            color: var(--spotify-green-hover);
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .navbar-menu {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                right: 0;
+                background-color: var(--surface-color);
+                padding: 10px;
+            }
+            
+            .navbar-menu.active {
+                display: flex;
+            }
+            
+            .navbar-menu li {
+                margin: 10px 0;
+            }
+        }
+        
+        @media (max-height: 600px) {
+            .modal-content {
+                margin: 0 auto;
+                height: 100vh;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="#" class="navbar-brand">Darjo Cyakk!</a>
+            <ul class="navbar-menu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#profile" class="nav-link">My Profile Cyakk!</a></li>
+                <li><a href="#hometown" class="nav-link">My Darjo Cyakk!</a></li>
+                <li><a href="#food" class="nav-link">Darjo's Food Cyakk!</a></li>
+                <li><a href="#tourist" class="nav-link">Darjo's Tourist Attraction Cyakk!</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <div id="home" class="page active">
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>Welcome to Sidoarjo!</h1>
+                    <p>Discover the charm and beauty of our lovely city</p>
+                </div>
+            </section>
+        </div>
+
+        <div id="profile" class="page">
+            <div class="container">
+                <section class="section">
+                    <h2>My Profile Cyakk!</h2>
+                    <div>
+                        <img src="images/profile.jpg" alt="Profile Picture" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;">
+                        <h3>Nadief Aqila Rabbani</h3>
+                        <p>My name is Nadief Aqila Rabbani. I'm a student of informatics engineering in ITS. I have a big interest in data actually, because i like analyze something and working with data could satisfy me because i can put my hobby and passion in it, it is music. I really love listening, playing, and making music.</p>
+                    </div>
+                </section>
+                
+                <section class="section">
+                    <h2>My Favorite Bands</h2>
+                    <div class="vertical-list" id="bandGrid"></div>
+                </section>
+            </div>
+        </div>
+
+        <div id="hometown" class="page">
+            <div class="container">
+                <section class="section">
+                    <h2>This Is Darjo Cyakkk!</h2>
+                    <img src="https://th.bing.com/th/id/OIP.6dCkFkZtB_0pTGl_XeUpAAHaE9?w=252&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Hometown" style="width: 100%; border-radius: 10px; margin-bottom: 1rem;">
+                    <h3>Welcome to Sidoarjo!</h3>
+                    <p>Sidoarjo is a city next to Surabaya located in Jawa Timur, Indonesia. Known for its Lumpur Lapindo and Petis. Sidoarjo also has a name City of Shrimp</p>
+                    <p>With a population of approximately 2,21 Million residents, Sidoarjo is famous for its severe traffic jam at gedangan intersection that is now being memes in social media. </p>
+                </section>
+
+                <section class="section">
+                    <h2>Local Attractions</h2>
+                    <div class="vertical-list">
+                        <div class="card" onclick="openModal('Famous Musician')">
+                            <img src="https://i.pinimg.com/564x/c7/1e/6e/c71e6ebc85e33da441aadfc445158f34.jpg" alt="Famous Musician">
+                            <div class="card-content">
+                                <h3>Drizzly</h3>
+                                <p>Learn about Sidoarjo's famous band, Drizzly</p>
+                            </div>
+                        </div>
+                        <div class="card" onclick="openModal('Local Soccer Team')">
+                            <img src="https://i.pinimg.com/736x/b5/16/af/b516afba7de68e5567473a040fdbbcc7.jpg" alt="Local Soccer Team">
+                            <div class="card-content">
+                                <h3>Deltras Sidoarjo</h3>
+                                <p>Discover the history of Deltras Sidoajo</p>
+                            </div>
+                        </div>
+                        <div class="card" onclick="openModal('Jalan Gedangan')">
+                            <img src="https://www.suarasurabaya.net/wp-content/uploads/2019/03/kk218004_clip10.jpg" alt="Jalan Gedangan">
+                            <div class="card-content">
+                                <h3>Gedangan Intersection</h3>
+                                <p>Explore our famous Gedangan Intersection</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div id="food" class="page">
+            <div class="container">
+                <section class="section">
+                    <h2>Darjo's Food</h2>
+                    <p>Discover the delicious local cuisine of Sidoarjo. Our town offers a unique culinary experience that reflects our rich cultural heritage.</p>
+                    <div class="vertical-list" id="foodGrid"></div>
+                </section>
+            </div>
+        </div>
+
+        <div id="tourist" class="page">
+            <div class="container">
+                <section class="section">
+                    <h2>Darjo Tourist Attractions</h2>
+                    <p>Explore Sidoarjo like a local! Discover our unique attractions and experience the charm that makes our town special.</p>
+                    <div class="vertical-list" id="touristGrid"></div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const bands = [
+            { 
+                name: "The Rolling Stones", 
+                cardImage: "https://i.pinimg.com/564x/51/b9/c8/51b9c81069e5c6c3a83f63dcfb3013ba.jpg",
+                modalImage: "https://i.pinimg.com/564x/74/69/46/7469466047fc34250099ca3f753d20ea.jpg", 
+                description: "The Rolling Stones are an English rock band formed in London in 1962. Active for six decades, they are one of the most popular and enduring bands of the rock era.",
+                spotifyProfile: "https://open.spotify.com/artist/22bE4uQ6baNwSHPVcDxLCe",
+                myTopSongs: [
+                    { name: "Gimme Shelter", link: "https://open.spotify.com/track/6H3kDe7CGoWYBabAeVWGiD" },
+                    { name: "Paint It Black", link: "https://open.spotify.com/track/63T7DJ1AFDD6Bn8VzG6JE8" },
+                    { name: "Sympathy for the Devil", link: "https://open.spotify.com/track/7G2ROWGiWQVmOjSoQRG2Be" },
+                    { name: "Wild Horses", link: "https://open.spotify.com/track/54I4zfzF1aFqK2V6Vt6Jnv" },
+                    { name: "You Can't Always Get What You Want", link: "https://open.spotify.com/track/6lFZbCc7pn6Lme1NP7qQqQ" }
+                ]
+            },
+            { 
+                name: "Queen", 
+                cardImage: "https://i.pinimg.com/564x/6f/32/cc/6f32cc7c3770d7ddd79ba3a488e04709.jpg",
+                modalImage: "https://i.pinimg.com/564x/1e/12/3a/1e123a9d16932d7b5300181ae69fdb42.jpg", 
+                description: "Queen are a British rock band formed in London in 1970. Their classic line-up was Freddie Mercury, Brian May, Roger Taylor and John Deacon. Their earliest works were influenced by progressive rock, hard rock and heavy metal, but the band gradually ventured into more conventional and radio-friendly works.",
+                spotifyProfile: "https://open.spotify.com/artist/1dfeR4HaWDbWqFHLkxsg1d",
+                myTopSongs: [
+                    { name: "Bohemian Rhapsody", link: "https://open.spotify.com/track/3z8h0TU7ReDPLIbEnYhWZb" },
+                    { name: "Don't Stop Me Now", link: "https://open.spotify.com/track/5T8EDUDqKcs6OSOwEsfqG7" },
+                    { name: "Somebody to Love", link: "https://open.spotify.com/track/4rDbp1vnvEhieiccprPMdI" },
+                    { name: "Under Pressure", link: "https://open.spotify.com/track/2fuCquhmrzHpu5xcA1ci9x" },
+                    { name: "The Show Must Go On", link: "https://open.spotify.com/track/4MZ5TRCFe0xjXNHhBuiKiM" }
+                ]
+            },
+            { 
+                name: "Led Zeppelin", 
+                cardImage: "https://i.pinimg.com/564x/a8/d7/23/a8d72323796b8fc2e5e63d86a45f70bc.jpg",
+                modalImage: "https://i.pinimg.com/564x/02/d9/87/02d98708d65b06c6a9f330e60f037cff.jpg", 
+                description: "Led Zeppelin were an English rock band formed in London in 1968. The group consisted of vocalist Robert Plant, guitarist Jimmy Page, bassist/keyboardist John Paul Jones, and drummer John Bonham. With their heavy, guitar-driven sound, Led Zeppelin are regularly cited as one of the progenitors of heavy metal and hard rock music.",
+                spotifyProfile: "https://open.spotify.com/artist/36QJpDe2go2KgaRleHCDTp",
+                myTopSongs: [
+                    { name: "Stairway to Heaven", link: "https://open.spotify.com/track/5CQ30WqJwcep0pYcV4AMNc" },
+                    { name: "Kashmir", link: "https://open.spotify.com/track/6TT7ALRBrGD9rwHLZN7zGl" },
+                    { name: "Whole Lotta Love", link: "https://open.spotify.com/track/0hCB0YR03f6AmQaHbwWDe8" },
+                    { name: "Immigrant Song", link: "https://open.spotify.com/track/78lgmZwycJ3nzsdgmPPGNx" },
+                    { name: "Since I've Been Loving You", link: "https://open.spotify.com/track/5K1ZZwWMUZ85zyqicGvE0n" }
+                ]
+            }
+        ];
+
+        const foods = [
+            {
+                name: "Lontong Kupang",
+                cardImage: "https://i.pinimg.com/564x/78/a2/fc/78a2fcf5a62713544cfcace19dcaf5d6.jpg",
+                modalImage: "https://i.pinimg.com/564x/78/a2/fc/78a2fcf5a62713544cfcace19dcaf5d6.jpg",
+                description: "A traditional dish from Sidoarjo featuring small clams served with rice cakes, known as lontong.",
+                recipe: "The dish is prepared by cooking small clams and serving them with lontong (rice cakes) and a spicy sauce."
+            },
+            {
+                name: "Bandeng Presto",
+                cardImage: "https://i.pinimg.com/564x/20/77/8c/20778cbbbbf5b250c080f0769c118bca.jpg",
+                modalImage: "https://i.pinimg.com/564x/20/77/8c/20778cbbbbf5b250c080f0769c118bca.jpg",
+                description: "A popular dish made from milkfish, pressure-cooked until the bones are soft and edible.",
+                recipe: "The milkfish is cleaned, seasoned, and then pressure-cooked until tender. It's often served fried or grilled."
+            },
+            {
+                name: "Petis Udang",
+                cardImage: "https://i.pinimg.com/564x/1f/7f/cd/1f7fcd525999dd3d9609522dd38670e8.jpg",
+                modalImage: "https://i.pinimg.com/564x/1f/7f/cd/1f7fcd525999dd3d9609522dd38670e8.jpg",
+                description: "A savory shrimp paste that's a specialty of Sidoarjo, often used as a condiment or flavoring in various dishes.",
+                recipe: "Made by cooking down shrimp with various spices until it forms a thick, flavorful paste."
+            }
+        ];
+
+        const attractions = [
+            {
+                name: "Kusuma Tirta Minapolitan",
+                cardImage: "https://th.bing.com/th/id/R.22133b25d7c0000c03b36bd282b1c9a6?rik=D9MIBWqKINxGjA&riu=http%3a%2f%2fwww.pesonanegeri.com%2fwp-content%2fuploads%2f2013%2f07%2ftopflyingkusumatirta1.jpg&ehk=5fieADTwc22avSjZ%2bl%2bOEFg098y3TaKMZbIzmI8WQYw%3d&risl=&pid=ImgRaw&r=0",
+                modalImage: "https://th.bing.com/th/id/R.22133b25d7c0000c03b36bd282b1c9a6?rik=D9MIBWqKINxGjA&riu=http%3a%2f%2fwww.pesonanegeri.com%2fwp-content%2fuploads%2f2013%2f07%2ftopflyingkusumatirta1.jpg&ehk=5fieADTwc22avSjZ%2bl%2bOEFg098y3TaKMZbIzmI8WQYw%3d&risl=&pid=ImgRaw&r=0",
+                description: "A water park and recreational area that showcases Sidoarjo's aquaculture industry.",
+                details: "This park features various attractions including fish ponds, water rides, and educational displays about local marine life and aquaculture practices."
+            },
+            {
+                name: "Masjid Agung Sidoarjo",
+                cardImage: "https://1.bp.blogspot.com/-0Ycun3yAioo/XR1YIDF995I/AAAAAAAABZo/ql3Pb00Msmonkjwqtgl-9Ntt3F0pKp5sACEwYBhgL/s1600/219256068003202.jpg",
+                modalImage: "https://1.bp.blogspot.com/-0Ycun3yAioo/XR1YIDF995I/AAAAAAAABZo/ql3Pb00Msmonkjwqtgl-9Ntt3F0pKp5sACEwYBhgL/s1600/219256068003202.jpg",
+                description: "The grand mosque of Sidoarjo, known for its beautiful architecture and spiritual significance.",
+                details: "Built in 1895, this mosque is not only a place of worship but also a historical landmark in Sidoarjo. It features a blend of traditional Javanese and modern architectural styles."
+            },
+            {
+                name: "Lumpur Lapindo",
+                cardImage: "https://1.bp.blogspot.com/-OG1bUlyR5uw/V3kpPTICAiI/AAAAAAAAAD0/hjnnh1HCIOEO1ZEUjrRV-HanLeVANSWmACLcB/s1600/Wisata%2BLumpur%2BLapindo%2BSidoarjo.jpg",
+                modalImage: "https://1.bp.blogspot.com/-OG1bUlyR5uw/V3kpPTICAiI/AAAAAAAAAD0/hjnnh1HCIOEO1ZEUjrRV-HanLeVANSWmACLcB/s1600/Wisata%2BLumpur%2BLapindo%2BSidoarjo.jpg",
+                description: "A unique geological site resulting from a mud volcano eruption in 2006.",
+                details: "While originally a disaster site, it has become an educational destination where visitors can learn about the event and its impact on the local community."
+            }
+        ];
+
+        function createBandCards() {
+            const bandGrid = document.getElementById('bandGrid');
+            bandGrid.innerHTML = ''; 
+
+            bands.forEach(band => {
+                const bandCard = document.createElement('div');
+                bandCard.className = 'band-card';
+                bandCard.onclick = () => openModal(band.name, 'band');
+
+                bandCard.innerHTML = `
+                    <img src="${band.cardImage}" alt="${band.name}">
+                    <div class="band-card-content">
+                        <h3>${band.name}</h3>
+                        <p>Click to learn more</p>
+                    </div>
+                `;
+
+                bandGrid.appendChild(bandCard);
+            });
+        }
+
+        function createFoodCards() {
+            const foodGrid = document.getElementById('foodGrid');
+            foodGrid.innerHTML = ''; 
+
+            foods.forEach(food => {
+                const foodCard = document.createElement('div');
+                foodCard.className = 'food-card';
+                foodCard.onclick = () => openModal(food.name, 'food');
+
+                foodCard.innerHTML = `
+                    <img src="${food.cardImage}" alt="${food.name}">
+                    <div class="food-card-content">
+                        <h3>${food.name}</h3>
+                        <p>Click to learn more</p>
+                    </div>
+                `;
+
+                foodGrid.appendChild(foodCard);
+            });
+        }
+
+        function createTouristCards() {
+            const touristGrid = document.getElementById('touristGrid');
+            touristGrid.innerHTML = ''; 
+
+            attractions.forEach(attraction => {
+                const attractionCard = document.createElement('div');
+                attractionCard.className = 'card';
+                attractionCard.onclick = () => openModal(attraction.name, 'tourist');
+
+                attractionCard.innerHTML = `
+                    <img src="${attraction.cardImage}" alt="${attraction.name}">
+                    <div class="card-content">
+                        <h3>${attraction.name}</h3>
+                        <p>Click to learn more</p>
+                    </div>
+                `;
+
+                touristGrid.appendChild(attractionCard);
+            });
+        }
+
+        function openModal(type, category = 'attraction') {
+            modal.style.display = "block";
+            const modalTitle = document.getElementById("modalTitle");
+            const modalContent = document.getElementById("modalContent");
+            modalTitle.textContent = type;
+
+            switch(category) {
+                case 'band':
+                    const band = bands.find(b => b.name === type);
+                    if (band) {
+                        modalContent.innerHTML = `
+                            <img src="${band.modalImage}" alt="${band.name}" style="width:100%;max-height:300px;object-fit:cover;margin-bottom:10px;">
+                            <p>${band.description}</p>
+                            <h3><a href="${band.spotifyProfile}" class="spotify-link" target="_blank" rel="noopener noreferrer">${band.name} on Spotify</a></h3>
+                            <h4>My Top 5 Songs:</h4>
+                            <ol>
+                                ${band.myTopSongs.map(song => `
+                                    <li>
+                                        <a href="${song.link}" class="spotify-link" target="_blank" rel="noopener noreferrer">${song.name}</a>
+                                    </li>
+                                `).join('')}
+                            </ol>
+                        `;
+                    }
+                    break;
+                case 'food':
+                    const food = foods.find(f => f.name === type);
+                    if (food) {
+                        modalContent.innerHTML = `
+                            <img src="${food.modalImage}" alt="${food.name}" style="width:100%;max-height:300px;object-fit:cover;margin-bottom:10px;">
+                            <p>${food.description}</p>
+                            <h4>How it's made:</h4>
+                            <p>${food.recipe}</p>
+                        `;
+                    }
+                    break;
+                case 'tourist':
+                    const attraction = attractions.find(a => a.name === type);
+                    if (attraction) {
+                        modalContent.innerHTML = `
+                            <img src="${attraction.modalImage}" alt="${attraction.name}" style="width:100%;max-height:300px;object-fit:cover;margin-bottom:10px;">
+                            <p>${attraction.description}</p>
+                            <h4>Details:</h4>
+                            <p>${attraction.details}</p>
+                        `;
+                    }
+                    break;
+                default:
+                    switch(type) {
+                        case "Famous Musician":
+                            modalContent.innerHTML = `
+                                <img src="https://i.pinimg.com/564x/c7/1e/6e/c71e6ebc85e33da441aadfc445158f34.jpg" alt="Famous Musician" style="width:100%;max-height:300px;object-fit:cover;margin-bottom:10px;">
+                                <p>Drizzly is Sidoarjo's pride. Born and raised here, they've achieved recognition in the Indonesian music scene. 
+                                Their music style is characterized by a blend of traditional Javanese elements with modern pop, and they've released hit songs that celebrate Sidoarjo's culture.</p>
+                            `;
+                            break;
+                        case "Local Soccer Team":
+                            modalContent.innerHTML = `
+                                <img src="https://i.pinimg.com/564x/a8/22/84/a82284c9ac4867344510f6a5980345dd.jpg" alt="Soccer Team" style="width:100%;max-height:300px;object-fit:cover;margin-bottom:10px;">
+                                <p>Our local soccer team, Deltras Sidoarjo, has been a source of pride since 1989. 
+                                They've competed in various levels of Indonesian football and are known for their passionate fanbase and community involvement.</p>
+                            `;
+                            break;
+                        case "Jalan Gedangan":
+                            modalContent.innerHTML = `
+                                <img src="https://awsimages.detik.net.id/community/media/visual/2022/08/16/perempatan-gedangan-sidoarjo_169.jpeg?w=700&q=90" alt="Jalan Gedangan" style="width:100%;max-height:300px;object-fit:cover;margin-bottom:10px;">
+                                <p>Jalan Gedangan is a famous street in Sidoarjo, known for its heavy traffic during peak hours. It's become a local meme and talking point, representing the city's growth and the challenges that come with rapid development. Despite the congestion, it's home to various local businesses and is an important economic corridor for the city.</p>
+                            `;
+                            break;
+                    }
+            }
+        }
+
+        const modal = document.getElementById("modal");
+        const closeBtn = document.getElementsByClassName("close")[0];
+
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pages = document.querySelectorAll('.page');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+
+                pages.forEach(page => page.classList.remove('active'));
+                navLinks.forEach(navLink => navLink.classList.remove('active'));
+                
+                document.getElementById(targetId).classList.add('active');
+                link.classList.add('active');
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            createBandCards();
+            createFoodCards();
+            createTouristCards();
+            
+            if (navLinks.length > 0) {
+                navLinks[0].classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
