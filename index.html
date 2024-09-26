@@ -246,19 +246,19 @@
 <body>
     <nav class="navbar">
         <div class="navbar-content">
-            <a href="#" class="navbar-brand">Darjo Cyakk!</a>
+            <a href="/quiz1" class="navbar-brand">Darjo Cyakk!</a>
             <ul class="navbar-menu">
-                <li><a href="#home" class="nav-link active">Home</a></li>
-                <li><a href="#profile" class="nav-link">My Profile Cyakk!</a></li>
-                <li><a href="#hometown" class="nav-link">My Darjo Cyakk!</a></li>
-                <li><a href="#food" class="nav-link">Darjo's Food Cyakk!</a></li>
-                <li><a href="#tourist" class="nav-link">Darjo's Tourist Attraction Cyakk!</a></li>
+                <li><a href="/quiz1" class="nav-link" data-page="home">Home</a></li>
+                <li><a href="/quiz1/profile" class="nav-link" data-page="profile">My Profile Cyakk!</a></li>
+                <li><a href="/quiz1/hometown" class="nav-link" data-page="hometown">My Darjo Cyakk!</a></li>
+                <li><a href="/quiz1/food" class="nav-link" data-page="food">Darjo's Food Cyakk!</a></li>
+                <li><a href="/quiz1/tourist" class="nav-link" data-page="tourist">Darjo's Tourist Attraction Cyakk!</a></li>
             </ul>
         </div>
     </nav>
 
     <main>
-        <div id="home" class="page active">
+        <div id="home" class="page">
             <section class="hero">
                 <div class="hero-content">
                     <h1>Welcome to Sidoarjo!</h1>
@@ -596,30 +596,68 @@
             }
         }
 
-        const navLinks = document.querySelectorAll('.nav-link');
-        const pages = document.querySelectorAll('.page');
+        // Corrected routing logic
+        function loadPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => page.style.display = 'none');
+            
+            // Show the target page
+            let targetPage;
+            if (pageName === 'quiz1' || pageName === '') {
+                targetPage = document.getElementById('home');
+            } else {
+                targetPage = document.getElementById(pageName);
+            }
+            
+            if (targetPage) {
+                targetPage.style.display = 'block';
+            }
 
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetId = link.getAttribute('href').substring(1);
-
-                pages.forEach(page => page.classList.remove('active'));
-                navLinks.forEach(navLink => navLink.classList.remove('active'));
-                
-                document.getElementById(targetId).classList.add('active');
-                link.classList.add('active');
+            // Update active class for navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('href').endsWith(pageName) || 
+                    (link.getAttribute('href').endsWith('quiz1') && (pageName === 'quiz1' || pageName === ''))) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
             });
-        });
+        }
+
+        function handleNavigation(event) {
+            event.preventDefault();
+            const path = new URL(event.target.href).pathname;
+            const pageName = path.split('/').pop() || 'quiz1';
+            
+            loadPage(pageName);
+
+            // Update URL without page reload
+            history.pushState(null, '', path);
+        }
 
         document.addEventListener('DOMContentLoaded', (event) => {
+            // Initial content creation
             createBandCards();
             createFoodCards();
             createTouristCards();
-            
-            if (navLinks.length > 0) {
-                navLinks[0].classList.add('active');
+
+            // Set up navigation event listeners
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', handleNavigation);
+            });
+
+            // Handle initial page load and browser back/forward
+            function loadPageFromURL() {
+                const path = window.location.pathname;
+                const pageName = path.split('/').pop() || 'quiz1';
+                loadPage(pageName);
             }
+
+            // Load the correct page on initial page load
+            loadPageFromURL();
+
+            // Handle browser back/forward
+            window.addEventListener('popstate', loadPageFromURL);
         });
     </script>
 </body>
