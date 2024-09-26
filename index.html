@@ -246,7 +246,7 @@
 <body>
     <nav class="navbar">
         <div class="navbar-content">
-            <a href="/quiz1" class="navbar-brand">Darjo Cyakk!</a>
+            <a href="/quiz1" class="navbar-brand" id="home-link">Darjo Cyakk!</a>
             <ul class="navbar-menu">
                 <li><a href="/quiz1" class="nav-link" data-page="home">Home</a></li>
                 <li><a href="/quiz1/profile" class="nav-link" data-page="profile">My Profile Cyakk!</a></li>
@@ -645,6 +645,9 @@
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.addEventListener('click', handleNavigation);
             });
+
+            // Add event listener for the home link (website title)
+            document.getElementById('home-link').addEventListener('click', handleNavigation);
 
             // Handle initial page load and browser back/forward
             function loadPageFromURL() {
